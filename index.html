@@ -1,87 +1,97 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Monopoly Math Kelas 6</title>
+    <title>Math Monopoly Kelas 6</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background-color: #e0f7fa; }
-        #board { display: flex; justify-content: center; margin-top: 50px; gap: 10px; flex-wrap: wrap; }
-        .tile { width: 100px; height: 100px; border: 3px solid #333; display: flex; align-items: center; 
-                justify-content: center; background: white; position: relative; font-weight: bold; font-size: 12px; }
-        .active { background-color: #ffe082; border-color: #ffb300; }
-        #player { font-size: 30px; position: absolute; bottom: 5px; transition: all 0.3s; }
-        #controls { margin-top: 30px; }
-        button { padding: 15px 30px; font-size: 18px; cursor: pointer; background: #2e7d32; color: white; border: none; border-radius: 8px; }
-        .status { margin-top: 20px; font-size: 20px; color: #1565c0; }
+        body { font-family: sans-serif; text-align: center; background: #e0f7fa; padding: 20px; }
+        #board { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .tile { width: 90px; height: 90px; border: 3px solid #333; background: white; display: flex; align-items: center; justify-content: center; font-size: 11px; position: relative; font-weight: bold; border-radius: 8px; }
+        #player { font-size: 35px; position: absolute; transition: all 0.5s; z-index: 10; }
+        #dice-display { font-size: 60px; margin: 20px; display: inline-block; }
+        button { padding: 15px 25px; font-size: 18px; cursor: pointer; background: #2e7d32; color: white; border: none; border-radius: 10px; box-shadow: 0 4px #1b5e20; }
+        button:active { box-shadow: 0 2px #1b5e20; transform: translateY(2px); }
+        
+        /* Animasi Getar Dadu */
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-20deg); }
+            50% { transform: rotate(20deg); }
+            75% { transform: rotate(-20deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .kocok { animation: shake 0.5s; }
     </style>
 </head>
 <body>
 
-    <h1>📐 Math Monopoly: Kelas 6</h1>
+    <h2>📐 Math Monopoly Kelas 6</h2>
     
     <div id="board">
         <div class="tile" id="t0">START<div id="player">🏃</div></div>
-        <div class="tile" id="t1">Materi: Bil. Bulat</div>
-        <div class="tile" id="t2">Materi: Lingkaran</div>
+        <div class="tile" id="t1">Bil. Bulat</div>
+        <div class="tile" id="t2">Lingkaran</div>
         <div class="tile" id="t3">ZONK!</div>
-        <div class="tile" id="t4">Materi: Kubus</div>
-        <div class="tile" id="t5">Materi: Statistika</div>
-        <div class="tile" id="t6">FINISH 🏆</div>
+        <div class="tile" id="t4">Volume</div>
+        <div class="tile" id="t5">FINISH 🏆</div>
     </div>
 
-    <div id="controls">
-        <button onclick="kocokDadu()">Kocok Dadu 🎲</button>
-        <p class="status" id="notif">Selamat Datang! Ayo main.</p>
-    </div>
+    <div id="dice-display">🎲</div>
+    <br>
+    <button id="btnKocok" onclick="kocokDadu()">Kocok Dadu 🎲</button>
+    <p id="status">Ayo mulai main!</p>
 
     <script>
-        let posisi = 0;
-        const totalPetak = 7;
-
-        // Daftar soal matematika kelas 6
-        const bankSoal = [
-            {}, // Start kosong
-            { tanya: "Berapa hasil dari -15 + 20?", jawab: 5 },
-            { tanya: "Jari-jari lingkaran 7 cm, berapa Luasnya? (pakai 22/7)", jawab: 154 },
-            { tanya: "Kamu mendarat di petak ZONK! 10 - 10 = ?", jawab: 0 },
-            { tanya: "Volume kubus dengan rusuk 5 cm adalah...", jawab: 125 },
-            { tanya: "Rata-rata dari nilai 7, 8, 9 adalah...", jawab: 8 }
+        let pos = 0;
+        const bank = [
+            {},
+            {t: "Berapa hasil dari -12 + 20?", j: 8},
+            {t: "Jari-jari lingkaran 7cm, berapakah Luasnya?", j: 154},
+            {t: "ZONK! Kamu terjebak! 10 x 10?", j: 100} ,
+            {t: "Sisi kubus 5cm, berapa volumenya?", j: 125}
         ];
 
         function kocokDadu() {
-            let dadu = Math.floor(Math.random() * 3) + 1; // Dadu 1-3
-            posisi += dadu;
+            const dice = document.getElementById('dice-display');
+            const btn = document.getElementById('btnKocok');
+            
+            dice.classList.add('kocok');
+            btn.disabled = true;
 
-            if (posisi >= totalPetak - 1) {
-                posisi = totalPetak - 1;
-                pindahPemain();
-                document.getElementById("notif").innerHTML = "HORE! Kamu sampai di Finish! 🎉";
-                return;
-            }
+            setTimeout(() => {
+                dice.classList.remove('kocok');
+                btn.disabled = false;
 
-            pindahPemain();
-            setTimeout(() => beriSoal(posisi), 500);
+                let d = Math.floor(Math.random() * 2) + 1; // Maju 1-2 langkah
+                pos += d;
+                
+                if (pos >= 5) {
+                    pos = 5;
+                    pindah();
+                    document.getElementById("status").innerHTML = "HORE! Kamu Finish! 🎉";
+                    return;
+                }
+                
+                pindah();
+                
+                setTimeout(() => {
+                    let userJawab = prompt(bank[pos].t);
+                    if(userJawab == bank[pos].j) {
+                        alert("BENAR! Kamu hebat.");
+                        document.getElementById("status").innerHTML = "Lanjut kocok dadu lagi!";
+                    } else {
+                        alert("SALAH! Harus mundur 1 langkah.");
+                        pos--;
+                        if(pos < 0) pos = 0;
+                        pindah();
+                    }
+                }, 500);
+            }, 500);
         }
 
-        function pindahPemain() {
-            const petakTujuan = document.getElementById("t" + posisi);
+        function pindah() {
+            const petak = document.getElementById("t" + pos);
             const player = document.getElementById("player");
-            petakTujuan.appendChild(player);
-        }
-
-        function beriSoal(index) {
-            let soal = bankSoal[index];
-            let jawabanUser = prompt(soal.tanya);
-
-            if (jawabanUser == soal.jawab) {
-                alert("BENAR! Kamu aman di petak ini.");
-                document.getElementById("notif").innerHTML = "Jawaban Benar! Lanjut kocok dadu.";
-            } else {
-                alert("SALAH! Kamu harus kembali ke petak sebelumnya.");
-                posisi -= 1;
-                if(posisi < 0) posisi = 0;
-                pindahPemain();
-                document.getElementById("notif").innerHTML = "Yah salah, mundur 1 langkah.";
-            }
+            petak.appendChild(player);
         }
     </script>
 </body>
